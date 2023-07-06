@@ -1,18 +1,20 @@
+// @ts-nocheck
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from './store';
 import { setFormData, submitForm } from './store';
+import { FormData } from './store';
 const steps = [
-    { title: 'Basic Details', fields: ['name', 'email', 'phone'] },
-    { title: 'Address', fields: ['address1', 'address2', 'city', 'state', 'pincode', 'country'] },
-    { title: 'File Upload', fields: ['singleFile'] },
-    { title: 'Multi File Upload', fields: ['multiFiles', 'geolocation'] },
+    { title: 'Basic Details', fields: ['name', 'email', 'phone_number'] },
+    { title: 'Address', fields: ['address_1', 'address_2', 'city', 'state', 'pincode', 'country'] },
+    { title: 'File Upload', fields: ['single_file'] },
+    { title: 'Multi File Upload', fields: ['multi_ups1', 'geolocation'] },
     { title: 'Status', fields: [] },
 ];
 
 const Form: React.FC = () => {
     const dispatch = useDispatch();
-    const formData = useSelector((state: RootState) => state.form);
+    const formData: FormData = useSelector((state: RootState) => state.form);
 
     const [currentStep, setCurrentStep] = useState(0);
 
@@ -21,13 +23,20 @@ const Form: React.FC = () => {
         dispatch(setFormData({ field: name, value }));
     };
 
-    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(e.target.files)
+        const file = e.target.files[0];
+        if (file) {
+            dispatch(setFormData({ field: e.target.name, value: file }));
+        }
+    };
+    const handleMFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(e.target.files)
         const file = e.target.files && e.target.files[0];
         if (file) {
             dispatch(setFormData({ field: e.target.name, value: file }));
         }
     };
-
     const handleSubmit = () => {
         dispatch(submitForm(formData));
     };
@@ -38,12 +47,17 @@ const Form: React.FC = () => {
             <div className="mt-4">
                 {fields.map((field) => (
                     <div key={field} className="mb-4">
+
                         <label htmlFor={field} className="block font-medium mb-1">{field}</label>
-                        {field === ('multiFiles') || field === 'singleFile' ? (
-                            <input type="file" name={field} multiple onChange={handleFileUpload} />
+                        {field === ('multi_ups1') && <input type="file" name={field} multiple onChange={handleMFileUpload} />}
+                        {field === ('single_file') && <input type="file" name={field} onChange={handleSFileUpload} />}
+                        {field === ('pincode') && <input type="number" name={field} value={formData[field] || 0} onChange={handleInputChange} />}
+                        {field === ('multi_ups1') || field === 'single_file' || field === ('pincode') ? (
+                            null
                         ) : (
                             <input type="text" name={field} value={formData[field] || ''} onChange={handleInputChange} />
                         )}
+
                     </div>
                 ))}
             </div>
@@ -73,14 +87,14 @@ const Form: React.FC = () => {
             {
                 currentStep === steps.length - 1 ? (
                     <div>
-                        <p>Form submitted successfully!</p>
+                        <p>Submit the form</p>
                         <div className="mt-4">
-                            <div className="flex justify-end">
+                            <div className="flex justify-between">
                                 <button className="bg-blue-500 text-white px-4 py-2 mt-4" onClick={() => setCurrentStep(0)}>
                                     Restart
                                 </button>
                                 <button
-                                    className="bg-blue-500 text-white px-4 py-2"
+                                    className="bg-blue-500 text-white px-4 py-2 mt-4"
                                     onClick={handleSubmit}
                                 >
                                     Submit
