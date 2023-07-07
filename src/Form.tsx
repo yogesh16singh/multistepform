@@ -1,9 +1,10 @@
 // @ts-nocheck
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from './store';
 import { setFormData, submitForm } from './store';
 import { FormData } from './store';
+import { useNavigate } from 'react-router-dom';
 const steps = [
     { title: 'Basic Details', fields: ['name', 'email', 'phone_number'] },
     { title: 'Address', fields: ['address_1', 'address_2', 'city', 'state', 'pincode', 'country'] },
@@ -13,6 +14,15 @@ const steps = [
 ];
 
 const Form: React.FC = () => {
+    const navigate = useNavigate();
+    const token = localStorage.getItem("Token")
+    useEffect(() => {
+        if (token == null) {
+            navigate("/");
+
+        }
+    }, [])
+
     const dispatch = useDispatch();
     const formData: FormData = useSelector((state: RootState) => state.form);
 
@@ -51,11 +61,11 @@ const Form: React.FC = () => {
                         <label htmlFor={field} className="block font-medium mb-1">{field}</label>
                         {field === ('multi_ups1') && <input type="file" name={field} multiple onChange={handleMFileUpload} />}
                         {field === ('single_file') && <input type="file" name={field} onChange={handleSFileUpload} />}
-                        {field === ('pincode') && <input type="number" name={field} value={formData[field] || 0} onChange={handleInputChange} />}
+                        {field === ('pincode') && <input className='border border-black rounded-md ps-2' type="number" name={field} value={formData[field] || 0} onChange={handleInputChange} />}
                         {field === ('multi_ups1') || field === 'single_file' || field === ('pincode') ? (
                             null
                         ) : (
-                            <input type="text" name={field} value={formData[field] || ''} onChange={handleInputChange} />
+                            <input className='border border-black rounded-md ps-2' type="text" name={field} value={formData[field] || ''} onChange={handleInputChange} />
                         )}
 
                     </div>
@@ -66,7 +76,7 @@ const Form: React.FC = () => {
     const progressBarWidth = ((currentStep + 1) / steps.length) * 100;
     const progressPercentage = ((currentStep + 1) / steps.length) * 100;
     return (
-        <div className="max-w-lg mx-auto p-4 border border-2 shadow-md">
+        <div className="max-w-lg mx-auto p-4  border-2 shadow-md">
             <h1 className="text-2xl font-semibold mb-4">Multi-Step Form</h1>
             <div className="bg-blue-200 p-2 mb-4">
                 <div className="relative h-4 bg-blue-100">

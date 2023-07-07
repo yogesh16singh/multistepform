@@ -11,22 +11,19 @@ import { RootState } from './store';
 import { useNavigate } from 'react-router-dom';
 
 interface ApiResponse {
-    // Define your API response type here
-    // This will depend on the structure of your API response
-    // For example, if your response is an object with a "message" field, you can define it like this:
     message: string;
     authToken: string;
 }
 
 const LoginPage: React.FC = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [responseData, setResponseData] = useState<ApiResponse | null>(null);
-    const [error, setError] = useState<string | null>(null);
+    // const [responseData, setResponseData] = useState<ApiResponse | null>(null);
+    // const [error, setError] = useState<string | null>(null);
     const [isSuccess, setIsSuccess] = useState(false);
     const [isFailed, setIsFailed] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { email, password, isEmailValid, isLoggedIn } = useSelector(
+    const { email, password, isEmailValid } = useSelector(
         (state: RootState) => state.auth
     );
 
@@ -58,7 +55,7 @@ const LoginPage: React.FC = () => {
 
     const validateEmail = (email: string) => {
         // Basic email validation using a regular expression
-        alert("hello");
+        // alert("hello");
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     };
@@ -75,9 +72,9 @@ const LoginPage: React.FC = () => {
         fetch('https://x8ki-letl-twmt.n7.xano.io/api:XooRuQbs/auth/login', requestOptions)
             .then((response) => response.json())
             .then((data: ApiResponse) => {
-                setResponseData(data);
+                // setResponseData(data);
                 if (data.authToken) {
-                    alert("success");
+                    // alert("success");
                     setIsSuccess(true);
                     setTimeout(() => {
                         setIsSuccess(false);
@@ -91,11 +88,12 @@ const LoginPage: React.FC = () => {
                     }, 3000)
                 }
 
-                setError(null);
+                // setError(null);
             })
             .catch((error) => {
-                setError(error.message);
-                setResponseData(null);
+                console.log(error)
+                // setError(error.message);
+                // setResponseData(null);
             });
         // Simulate an API call for login
         // return new Promise<void>((resolve, reject) => {
